@@ -17,6 +17,7 @@ body {
 
 .right {
     width: 75vw;
+    position: relative;
 }
 
 
@@ -38,6 +39,30 @@ body {
     width: 100%;
     font-weight: bold;
     font-size: 12px;
+}
+
+.songlist{
+   max-height: 55vh;
+   overflow: auto;
+   margin: 15px 0;
+}
+
+.songlist .info{
+    font-size: 12px;
+}
+
+.songlist ul li{
+    list-style-type: decimal;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    cursor: pointer;
+    padding: 10px;
+    /* background-color: black;  */
+    border: 1px solid white;
+    border-radius: 8px;
+    margin: 12px 0;
+
 }
 
 .library{
@@ -153,3 +178,23 @@ body {
     opacity: 0;
 }
 
+.playbar{
+    position: fixed;
+    bottom: 1   0px;
+    width: 73.5vw;
+    background-color: aquamarine;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:20px;
+}
+
+.songbutton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:20px;
+}
