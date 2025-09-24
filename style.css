@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+.left {
+    width: 25vw;
+}
+
+.right {
+    width: 75vw;
+}
+
+
+.home ul li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    list-style: none;
+    width: 6vw;
+    padding-top: 20px;
+    font-weight: bold;
+}
+
+.heading{
+    display: flex;
+    align-items: center;  
+    gap: 10px;
+    width: 100%;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.library{
+    min-height: 70vh;
+    position: relative;
+}
+
+.footer{
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 12px;
+    gap: 20px;
+    position: absolute;
+    bottom: 15px;
+
+}
+
+.footer a{
+    color: grey;
+    text-decoration: none;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(52, 52, 52);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    height: 10.5%;
+}
+
+.header > *{
+    padding: 20px;
+}
+
+.buttons >*{
+    margin: 0 12px;
+}
+
+.signupbtn{
+    background-color:rgb(52, 52, 52);
+    color: rgb(156, 156, 156);
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.signupbtn:hover{
+    font-size: 15px;
+    color: white;
+}
+
+.loginbtn{
+    background-color:white;
+    color: black;
+    width: 70px;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 10px;
+    border: none;
+}
+
+.loginbtn:hover{
+    border: none;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.playlist{
+    padding: 20px;
+}
+
+.cardContainer{
+    margin: 30px;
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+.card{
+    width: 200px;
+    padding: 15px;
+    border-radius:5px;
+    position: relative;
+}
+
+.card:hover{
+    background-color: rgb(54, 54, 54);
+    transition: all 0.5s linear(0 0%, 0 1.8%, 0.01 3.6%, 0.03 6.35%, 0.07 9.1%, 0.13 11.4%, 0.19 13.4%, 0.27 15%, 0.34 16.1%, 0.54 18.35%, 0.66 20.6%, 0.72 22.4%, 0.77 24.6%, 0.81 27.3%, 0.85 30.4%, 0.88 35.1%, 0.92 40.6%, 0.94 47.2%, 0.96 55%, 0.98 64%, 0.99 74.4%, 1 86.4%, 1 100%);
+}
+
+.card:hover .play{
+    opacity: 1;
+    bottom: 90px;
+    transition: all 0.2s ease-in;
+
+}
+
+.card img{
+    width : 100%;
+    object-fit: contain;
+    padding-bottom: 10px;
+}
+
+.play{
+    position: absolute;
+    bottom: 85px;
+    right: 15px;
+    opacity: 0;
+}
+
