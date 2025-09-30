@@ -20,6 +20,9 @@ body {
     position: relative;
 }
 
+.close{
+    display: none;
+}
 
 .home ul li {
     display: flex;
@@ -94,6 +97,10 @@ body {
     height: 10.5%;
 }
 
+.hamburger{
+    display: none;
+}
+
 .header > *{
     padding: 20px;
 }
@@ -144,7 +151,7 @@ body {
     gap: 25px;
     flex-wrap: wrap;
     max-height: 70vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 .card{
     width: 200px;
@@ -225,4 +232,40 @@ body {
     align-items: center;
     gap:20px;
     cursor: pointer;
+}
+
+
+@media (max-width: 1400px){
+    .left{
+        background-color: black;
+        position: absolute;
+        left: -100%;
+        z-index: 1;
+        transition: all .2s ease-in-out;
+        width: 40vw;
+
+    }
+
+    .left .close{
+        display: block;
+        position: absolute;
+        right: 30px;
+        top: 30px;
+    }
+
+    .right{
+        width: 100vw;
+    }
+
+    .playbar{
+        width: 95.5vw;
+    }
+
+    .hamburger{
+        display: block;
+    }
+
+    .nav>svg{
+        display: none;
+    }
 }
