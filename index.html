@@ -72,7 +72,7 @@
             <div class="playlist">
                 <h1>Sangeet Playlist</h1>
                 <div class="cardContainer">
-                    <div class="card bg-grey">
+                    <div data-folder="BHAJAN" class="card bg-grey">
                         <div class="play">
                             <svg fill="#000000" width="64px" height="64px" viewBox="-2.4 -2.4 28.80 28.80" id="play"
                                 data-name="Flat Color" xmlns="http://www.w3.org/2000/svg" class="icon flat-color"
@@ -91,7 +91,7 @@
                         <h2>Happy Hits</h2>
                         <p>Hits to boost your mood and fill with you happiness!</p>
                     </div>
-                    <div class="card bg-grey">
+                    <div data-folder="Songs" class="card bg-grey">
                         <div class="play">
                             <svg fill="#000000" width="64px" height="64px" viewBox="-2.4 -2.4 28.80 28.80" id="play"
                                 data-name="Flat Color" xmlns="http://www.w3.org/2000/svg" class="icon flat-color"
@@ -181,6 +181,10 @@
                         <img id="next" src="next.svg" alt="next">
                     </div>
                     <div class="songtime"></div>
+                    <div class="volume">
+                        <img src="volume.svg" alt="volume">
+                        <input class="range" type="range" name="volume" id="" value="100">
+                    </div>
                 </div>
             </div>
         </div>
