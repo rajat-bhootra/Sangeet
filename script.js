@@ -76,7 +76,7 @@ async function displayAlbums() {
         const e = array[index];
         if (e.href.includes("/songs")) {
             let folder = e.href.split("/").slice(-2)[0]
-            let a = await fetch(`http://10.32.6.12:3000/songs/${folder}`)
+            let a = await fetch(`http://192.168.54.64:3000/songs/${folder}`)
             cardContainer.innerHTML = cardContainer.innerHTML + `<div data-folder="${folder}" class="card bg-grey">
                         <div class="play">
                             <svg fill="#000000" width="64px" height="64px" viewBox="-2.4 -2.4 28.80 28.80" id="play"
@@ -94,7 +94,6 @@ async function displayAlbums() {
                         </div>
                         <img src="images/folder.svg" alt="folder">
                         <h2>${decodeURI(folder)}</h2>
-                        <p>songs for you</p>
                     </div>`
         }
     }
@@ -110,7 +109,7 @@ async function displayAlbums() {
 
 async function main() {
     // get the list of all songs
-    await getSongs("songs/Songs")
+    await getSongs("songs/BHAJAN")
     playmusic(songs[0], true)
 
     //display all the albums on the page
