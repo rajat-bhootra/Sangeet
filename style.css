@@ -105,6 +105,11 @@ body {
     background-color: #2a2a2a;
 }
 
+.info{
+    display: flex;
+    width:70%;
+}
+
 .playlist {
     padding: 20px;
 }

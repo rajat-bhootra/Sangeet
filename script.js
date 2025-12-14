@@ -13,6 +13,16 @@ function formatTime(seconds) {
     return `${paddedMins}:${paddedSecs}`;
 }
 
+function cleanSongName(filename) {
+    return decodeURI(filename)
+        .replace(/\.[^/.]+$/, "")        // remove .mp3
+        .replace(/[_\-]+/g, " ")          // _ and - to space
+        .replace(/\(.*?\)/g, "")          // remove (128kbps)
+        .replace(/\b\d+\b/g, "")          // remove track numbers
+        .replace(/\s+/g, " ")             // extra spaces
+        .trim();
+}
+
 async function getSongs(folder) {
     currfolder = folder;
     let a = await fetch(`/${folder}/`)
@@ -34,22 +44,23 @@ async function getSongs(folder) {
     songUL.innerHTML = ""
     for (const song of songs) {
         songUL.innerHTML = songUL.innerHTML + `
-                            <li> 
+                            <li data-file="${song}"> 
                             <img class="invert" src="images/music.svg" alt="music">
                             <div class="info">
-                                <div>${song.replaceAll("%20", " ")}</div>
-                                <div>Song Artist</div>
+                                ${cleanSongName(song)}
                             </div>
                             <img class="invert" src="images/play.svg" alt="play">
                             </li>`;
     }
 
     //Attach an event listener to each song
-    Array.from(document.querySelector(".songlist").getElementsByTagName("li")).forEach(e => {
-        e.addEventListener("click", element => {
-            playmusic(e.querySelector(".info").firstElementChild.innerHTML.trim());
-        })
-    })
+    Array.from(document.querySelector(".songlist").getElementsByTagName("li"))
+    .forEach(li => {
+        li.addEventListener("click", () => {
+            const file = li.dataset.file; // REAL filename.mp3
+            playmusic(file);
+        });
+    });
 
     return songs
 }
@@ -60,7 +71,7 @@ const playmusic = (track, pause = false) => {
         currentsong.play();
         playing.src = "images/pause.svg"
     }
-    document.querySelector(".songinfo").innerHTML = decodeURI(track)
+    document.querySelector(".songinfo").innerHTML = cleanSongName(track)
     document.querySelector(".songtime").innerHTML = `00:00/00:00`
 }
 
