@@ -8,7 +8,6 @@
 }
 
 body {  
-    background: #577BFBFF;
     background: linear-gradient(0deg, rgba(87, 123, 251, 1) 0%, rgba(173, 107, 200, 1) 50%, rgba(236, 113, 144, 1) 100%);  
     height: 95vh;
     background-attachment: fixed;
@@ -170,21 +169,33 @@ body {
 /* ===== PLAYBAR ===== */
 .playbar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: 8px;
+    left: 25%;
+    width: 50%;
     height: 10%;
-    background-color: #fcfcfc7b;
+    background: linear-gradient(0deg, rgba(87, 123, 251, 1) 0%, rgba(173, 107, 200, 1) 50%, rgba(236, 113, 144, 1) 100%);
+    color: white;
+    border-radius: 15px;
+    border: 2px solid silver;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px 0;
+    padding: 15px 0;
     z-index: 15;
 }
 
+.timeline{
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    color: black;
+}
+
 .seekbar {
-    width: 96%;
-    height: 4px;
+    width: 75%;
+    height: 8px;
     background: #005a50;
     border-radius: 10px;
     position: relative;
@@ -192,12 +203,13 @@ body {
 }
 
 .circle {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
+    border: 1px solid black;
     border-radius: 50%;
     background-color: #00ffbb;
     position: absolute;
-    top: -5px;
+    top: -3px;
     left: 0%;
     transition: left 0.1s linear;
 }
@@ -208,19 +220,28 @@ body {
     justify-content: space-between;
     align-items: center;
     width: 96%;
-    margin-top: 8px;
+    margin-top: 14px;
+}
+
+.songinfo{
+    width: 40%;
+    height: 25px;
 }
 
 .songbutton {
+    width: 20%;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 15px;
     cursor: pointer;
 }
 
 .volume {
+    width: 40%;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
 }
 

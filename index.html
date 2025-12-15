@@ -35,7 +35,7 @@
                     <img class="invert hamburger" src="images/hamburger.svg" alt="hamburger">
                 </div>
                 <div class="logo">
-                    <img width="50vw" src="images/logo.png" alt="logo">
+                    <img width="50vw"src="images/logo.png" alt="logo">
                     <span>SANGEET</span>
                 </div>
             </div>
@@ -51,9 +51,14 @@
 
         <!-- Playbar -->
         <div class="playbar">
-            <div class="seekbar">
-                <div class="circle"></div>
+            <div class="timeline">
+                <div class="currenttime"></div>
+                <div class="seekbar">
+                    <div class="circle"></div>
+                </div>
+                <div class="songduration"></div>
             </div>
+
             <div class="infobar">
                 <div class="songinfo"></div>
                 <div class="songbutton">
@@ -61,7 +66,6 @@
                     <img id="playing" src="images/play.svg" alt="play">
                     <img id="next" src="images/next.svg" alt="next">
                 </div>
-                <div class="songtime"></div>
                 <div class="volume">
                     <img src="images/volume.svg" alt="volume">
                     <input class="range" type="range" name="volume" value="100">

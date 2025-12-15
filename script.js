@@ -72,7 +72,8 @@ const playmusic = (track, pause = false) => {
         playing.src = "images/pause.svg"
     }
     document.querySelector(".songinfo").innerHTML = cleanSongName(track)
-    document.querySelector(".songtime").innerHTML = `00:00/00:00`
+    document.querySelector(".currenttime").innerHTML = `00:00`
+    document.querySelector(".songduration").innerHTML = `00:00`
 }
 
 async function displayAlbums() {
@@ -87,7 +88,7 @@ async function displayAlbums() {
         const e = array[index];
         if (e.href.includes("/songs")) {
             let folder = e.href.split("/").slice(-2)[0]
-            let a = await fetch(`http://192.168.54.64:3000/songs/${folder}`)
+            let a = await fetch(`http://10.235.135.64:3000/songs/${folder}`)
             cardContainer.innerHTML = cardContainer.innerHTML + `<div data-folder="${folder}" class="card bg-grey">
                         <div class="play">
                             <svg fill="#000000" width="64px" height="64px" viewBox="-2.4 -2.4 28.80 28.80" id="play"
@@ -141,7 +142,8 @@ async function main() {
 
     // Listen for time update
     currentsong.addEventListener("timeupdate", () => {
-        document.querySelector(".songtime").innerHTML = `${formatTime(currentsong.currentTime)}/${formatTime(currentsong.duration)}`
+        document.querySelector(".currenttime").innerHTML = `${formatTime(currentsong.currentTime)}`
+        document.querySelector(".songduration").innerHTML = `${formatTime(currentsong.duration)}`
         document.querySelector(".circle").style.left = (currentsong.currentTime / currentsong.duration) * 100 + "%"
     })
 
