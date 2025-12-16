@@ -2,6 +2,7 @@ console.log('lets do JS');
 let currentsong = new Audio();
 let songs;
 let currfolder;
+
 function formatTime(seconds) {
     if (isNaN(seconds) || seconds < 0) {
         return "00:00"
@@ -23,8 +24,20 @@ function cleanSongName(filename) {
         .trim();
 }
 
+function cleanFolderName(folderPath) {
+    const folder = folderPath.split("/").pop();
+    return decodeURI(folder)
+        .replace(/[_\-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
 async function getSongs(folder) {
     currfolder = folder;
+    const folderTitle = document.querySelector(".foldername h3");
+    if (folderTitle) {
+        folderTitle.textContent = cleanFolderName(folder);
+    }
     let a = await fetch(`/${folder}/`)
     let response = await a.text();
     let div = document.createElement("div")
@@ -55,12 +68,12 @@ async function getSongs(folder) {
 
     //Attach an event listener to each song
     Array.from(document.querySelector(".songlist").getElementsByTagName("li"))
-    .forEach(li => {
-        li.addEventListener("click", () => {
-            const file = li.dataset.file; // REAL filename.mp3
-            playmusic(file);
+        .forEach(li => {
+            li.addEventListener("click", () => {
+                const file = li.dataset.file; // REAL filename.mp3
+                playmusic(file);
+            });
         });
-    });
 
     return songs
 }
@@ -113,6 +126,8 @@ async function displayAlbums() {
     // load the folder whenever the card is clicked
     Array.from(document.getElementsByClassName("card")).forEach(e => {
         e.addEventListener("click", async item => {
+            item.currentTarget.dataset.folder
+
             songs = await getSongs(`songs/${item.currentTarget.dataset.folder}`)
             playmusic(songs[0])
         })
@@ -120,6 +135,7 @@ async function displayAlbums() {
 }
 
 async function main() {
+    
     // get the list of all songs
     await getSongs("songs/BHAJAN")
     playmusic(songs[0], true)
@@ -144,15 +160,24 @@ async function main() {
     currentsong.addEventListener("timeupdate", () => {
         document.querySelector(".currenttime").innerHTML = `${formatTime(currentsong.currentTime)}`
         document.querySelector(".songduration").innerHTML = `${formatTime(currentsong.duration)}`
-        document.querySelector(".circle").style.left = (currentsong.currentTime / currentsong.duration) * 100 + "%"
+        if ((currentsong.currentTime / currentsong.duration) * 100 < 99.8) {
+            document.querySelector(".circle").style.left = (currentsong.currentTime / currentsong.duration) * 100 + "%"
+        }
+        document.querySelector(".trail").style.width = (currentsong.currentTime / currentsong.duration) * 100 + "%"
     })
 
     // event listner to seekbar
-    document.querySelector(".seekbar").addEventListener("click", e => {
-        let percent = (e.offsetX / e.target.getBoundingClientRect().width) * 100
-        document.querySelector(".circle").style.left = percent + "%"
-        currentsong.currentTime = ((currentsong.duration) * percent) / 100
-    })
+    const seekbar = document.querySelector(".seekbar");
+
+    seekbar.addEventListener("click", (e) => {
+        const rect = seekbar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left; // click position inside seekbar
+        const percent = (clickX / rect.width) * 100;
+
+        document.querySelector(".circle").style.left = percent + "%";
+        document.querySelector(".trail").style.width = percent + "%";
+        currentsong.currentTime = (currentsong.duration * percent) / 100;
+    });
 
     //event listner for hambuger
     document.querySelector(".hamburger").addEventListener("click", () => {
@@ -183,28 +208,28 @@ async function main() {
     //event listner to volume
     document.querySelector(".volume").getElementsByTagName("input")[0].addEventListener("change", (e) => {
         currentsong.volume = parseInt(e.target.value) / 100
-        
-        if(document.querySelector(".volume").getElementsByTagName("img")[0].src.includes("images/mute.svg")){
-            document.querySelector(".volume").getElementsByTagName("img")[0].src = document.querySelector(".volume").getElementsByTagName("img")[0].src.replace("images/mute.svg","images/volume.svg") 
+
+        if (document.querySelector(".volume").getElementsByTagName("img")[0].src.includes("images/mute.svg")) {
+            document.querySelector(".volume").getElementsByTagName("img")[0].src = document.querySelector(".volume").getElementsByTagName("img")[0].src.replace("images/mute.svg", "images/volume.svg")
         }
-        if (currentsong.volume == 0){
-            document.querySelector(".volume").getElementsByTagName("img")[0].src = document.querySelector(".volume").getElementsByTagName("img")[0].src.replace("images/volume.svg","images/mute.svg")
+        if (currentsong.volume == 0) {
+            document.querySelector(".volume").getElementsByTagName("img")[0].src = document.querySelector(".volume").getElementsByTagName("img")[0].src.replace("images/volume.svg", "images/mute.svg")
         }
     })
 
     // add event listner to mute the track
     let prev_value
-    document.querySelector(".volume>img").addEventListener("click",e=>{
-        if (e.target.src.includes("images/volume.svg")){
-            e.target.src = e.target.src.replace("images/volume.svg","images/mute.svg")
+    document.querySelector(".volume>img").addEventListener("click", e => {
+        if (e.target.src.includes("images/volume.svg")) {
+            e.target.src = e.target.src.replace("images/volume.svg", "images/mute.svg")
             currentsong.volume = 0
             prev_value = document.querySelector(".volume").getElementsByTagName("input")[0].value
             document.querySelector(".volume").getElementsByTagName("input")[0].value = 0
-            
+
         }
-        else{
-            e.target.src = e.target.src.replace("images/mute.svg","images/volume.svg") 
-            currentsong.volume = parseInt(prev_value)/100
+        else {
+            e.target.src = e.target.src.replace("images/mute.svg", "images/volume.svg")
+            currentsong.volume = parseInt(prev_value) / 100
             document.querySelector(".volume").getElementsByTagName("input")[0].value = prev_value
 
         }
