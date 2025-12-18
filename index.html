@@ -6,21 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="utility.css">
     <title>Sangeet</title>
 </head>
 
 <body>
     <div class="container flex">
-        <!-- Sidebar (Library) -->
+        <!-- Library -->
         <div class="left rounded ">
-            <div class="library rounded p1 m1">
+            <div class="library rounded">
                 <div class="heading">
                     <img class="invert" src="images/library.svg" alt="lib">
                     <h2>Your Library</h2>
-                    <div class="close">
-                        <img class="invert" src="images/cross.svg" alt="cross">
-                    </div>
                 </div>
                 <div class="foldername">
                     <h3></h3>
@@ -31,22 +27,21 @@
             </div>
         </div>
 
-        <!-- Main Section (Playlist) -->
+        <!-- Playlist -->
         <div class="right rounded">
-            <div class="header rounded">
-                <div class="nav">
-                    <img class="invert hamburger" src="images/hamburger.svg" alt="hamburger">
-                </div>
-                <div class="logo">
-                    <img width="50vw"src="images/logo.png" alt="logo">
-                    <span>SANGEET</span>
-                </div>
+            <div class="logo rounded">
+                <img width="50vw" src="images/logo.png" alt="logo">
+                <span>SANGEET</span>
             </div>
 
             <div class="playlist">
                 <div class="name">
                     <img class="invert" src="images/playlist.svg" alt="playlist">
                     <span>Playlists</span>
+                    <button id="pickFolder">
+                        <span class="text">Upload Folder</span>
+                    </button>
+                    <input type="file" id="fileInput" accept="audio/*" webkitdirectory multiple hidden>
                 </div>
                 <div class="cardContainer"></div>
             </div>
@@ -70,9 +65,9 @@
                     <img id="playing" src="images/play.svg" alt="play">
                     <img id="next" src="images/next.svg" alt="next">
                 </div>
-                <div class="volume invert">
-                    <img src="images/volume.svg" alt="volume">
-                    <input class="range" type="range" name="volume" value="100">
+                <div class="volume">
+                    <img class="invert" src="images/volume.svg" alt="volume">
+                    <input class="range" type="range" name="volume" min="0" max="100" value="100">
                 </div>
             </div>
         </div>

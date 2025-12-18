@@ -1,0 +1,32 @@
+<svg fill="#000000" width="64px" height="64px"
+     viewBox="-2.4 -2.4 28.80 28.80"
+     id="play"
+     xmlns="http://www.w3.org/2000/svg"
+     class="icon flat-color"
+     stroke="#ffffffff"
+     stroke-width="0.8">
+
+    <defs>
+        <linearGradient id="playGradient" gradientTransform="rotate(90)">
+            <stop offset="0%" stop-color="rgba(236, 113, 144, 1)" />
+            <stop offset="50%" stop-color="rgba(173, 107, 200, 1)" />
+            <stop offset="100%" stop-color="rgba(87, 123, 251, 1)" />
+        </linearGradient>
+    </defs>
+
+    <g id="SVGRepo_iconCarrier">
+        <circle
+            id="primary"
+            cx="12"
+            cy="12"
+            r="10"
+            fill="url(#playGradient)">
+        </circle>
+
+        <path
+            id="secondary"
+            d="M14.75,12.83,11.55,15A1,1,0,0,1,10,14.13V9.87A1,1,0,0,1,11.55,9l3.2,2.13A1,1,0,0,1,14.75,12.83Z"
+            style="fill: #ffffffff;">
+        </path>
+    </g>
+</svg>
