@@ -599,6 +599,7 @@ button:active {
         text-align: center;
         font-size: 14px;
         overflow-y: hidden;
+        justify-content: flex-start;
         flex-direction: column;
     }
 
