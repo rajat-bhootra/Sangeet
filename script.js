@@ -95,11 +95,15 @@ async function displayAlbums() {
     userFolders.forEach(folder => {
         cardContainer.innerHTML += `
             <div data-folder="${folder.name}" class="card bg-grey">
+                <div class="foldersvg">
+                    <img src="images/folder.svg" alt="folder">
+                </div>
                 <div class="play">
                     <img src="images/playlist_play.svg" alt="playlist_play">
                 </div>
-                <img src="images/folder.svg" alt="folder">
-                <h2>${cleanFolderName(folder.name)}</h2>
+                <div class="cardname">
+                    <h2>${cleanFolderName(folder.name)}</h2>
+                </div>         
             </div>`;
     });
 
