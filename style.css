@@ -5,6 +5,15 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+*:focus {
+    outline: none;
+}
+
+*:active {
+    outline: none;
 }
 
 body {
@@ -161,7 +170,7 @@ body {
 }
 
 .name img {
-    width: 5%;
+    width: 4%;
 }
 
 button {
@@ -270,12 +279,11 @@ button:active {
 .cardname {
     width: 100%;
     height: 20%;
-    font-size: 125%;
+    font-size: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
 
 .playbar {
     position: fixed;
@@ -322,6 +330,15 @@ button:active {
     top: -3px;
     left: 0%;
     transition: left 0.15s linear;
+}
+
+.circle::before {
+    content: "";
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    right: -15px;
+    bottom: -15px;
 }
 
 .trail {
@@ -375,7 +392,7 @@ button:active {
     accent-color: #ffffff;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
 
     .container {
         flex-direction: column;
@@ -395,12 +412,6 @@ button:active {
         width: 96%;
         height: 40%;
         margin: 0% 2% 2% 2%;
-    }
-
-    /* Playlist */
-    .playlist {
-        padding: 0% 2%;
-        height: 82%;
     }
 
     .playlist .name {
@@ -434,14 +445,12 @@ button:active {
         font-size: 80%;
     }
 
-    /* Library */
     .songlist {
         height: 70%;
         overflow-y: auto;
         padding: 0% 5%;
     }
 
-    /* PLAYBAR */
     .playbar {
         position: fixed;
         bottom: 1%;
@@ -459,20 +468,151 @@ button:active {
 
 @media (max-width: 600px) {
 
-    .card {
-        width: 90%;
-        height: 200px;
+    .container {
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
     }
 
-    .songlist ul li {
-        padding: 12px;
+    .right {
+        order: 1;
+        width: 96%;
+        height: 40%;
+        margin: 2%;
+    }
+
+    .left {
+        order: 2;
+        width: 96%;
+        height: 40%;
+        margin: 0% 2% 2% 2%;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .logo img {
+        width: 10%;
+    }
+
+    .playlist .name {
+        height: 8%;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        font-weight: bold;
+        gap: 20px;
+    }
+
+    .name img {
+        width: 8%;
+    }
+
+    button {
+        border-radius: 6px;
+        font-size: 50%;
+        font-weight: bold;
+        width: 20%;
+        padding: .1%;
+    }
+
+    button h5 {
+        border-radius: 4px;
+        width: 98%;
+        height: 90%;
+        padding: .5% 1%;
+        transition: 300ms;
+    }
+
+    .cardContainer {
+        padding-top: 3%;
+    }
+
+    .card {
+        width: 47%;
+        height: 60%;
+    }
+
+    .play {
+        opacity: 1;
+    }
+
+    .cardname {
+        font-size: 75%;
+    }
+
+    .heading {
+        height: 15%;
+        font-size: 10px;
+    }
+
+    .heading img {
+        width: 8%;
+    }
+
+    .foldername {
+        height: 10%;
+        font-size: 14px;
+    }
+
+    .songlist {
+        height: 72%;
+    }
+
+    .playbar {
+        position: fixed;
+        bottom: 1%;
+        left: 2%;
+        width: 96%;
+        height: 14%;
+        background-color: #00000099;
+        color: white;
+        border-radius: 12px;
+        border: 2px solid white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .timeline {
+        font-size: 14px;
+    }
+
+    .seekbar {
+        width: 60%;
+    }
+
+    .infobar {
+        flex-direction: column;
+        text-align: center;
     }
 
     .songinfo {
-        font-size: 13px;
+        width: 90%;
+        text-align: center;
+        font-size: 14px;
+        overflow-y: hidden;
+        flex-direction: column;
     }
 
-    .songbutton img {
-        width: 22px;
+    .volume {
+        display: none;
     }
+
+    .info {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 360px) {
+    .card {
+        width: 46.8%;
+    }
+
+    .info {
+        font-size: 12px;
+    }
+
+
 }

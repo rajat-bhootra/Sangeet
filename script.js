@@ -1,3 +1,11 @@
+alert(
+  "Select a folder that contains your music 🎵\n\n" +
+  "• This site only plays your audio files\n" +
+  "• Your music is NOT uploaded or stored\n" +
+  "• Reloading the page will remove the selected files\n\n" +
+  "Enjoy your music!"
+);
+
 let currentsong = new Audio();
 let songs;
 let currfolder;
@@ -17,11 +25,11 @@ function formatTime(seconds) {
 
 function cleanSongName(filename) {
     return decodeURI(filename)
-        .replace(/\.[^/.]+$/, "")     
-        .replace(/[_\-]+/g, " ")         
-        .replace(/\(.*?\)/g, "")         
-        .replace(/\b\d+\b/g, "")          
-        .replace(/\s+/g, " ")             
+        .replace(/\.[^/.]+$/, "")
+        .replace(/[_\-]+/g, " ")
+        .replace(/\(.*?\)/g, "")
+        .replace(/\b\d+\b/g, "")
+        .replace(/\s+/g, " ")
         .trim();
 }
 
@@ -48,6 +56,15 @@ async function getSongs(folder) {
     if (folderTitle) {
         folderTitle.textContent = cleanFolderName(folder);
     }
+
+    // sort songs alphanumerically
+    songs.sort((a, b) =>
+        cleanSongName(a.name).localeCompare(
+            cleanSongName(b.name),
+            undefined,
+            { numeric: true, sensitivity: "base" }
+        )
+    );
 
     //show all the songs in the library
     let songUL = document.querySelector(".songlist ul");
@@ -135,7 +152,7 @@ async function main() {
             if (!isAudioFile(file)) return;
 
             const parts = file.webkitRelativePath.split("/");
-            const folderName = parts.length > 2 ? parts[1] : "Songs";
+            const folderName = parts.length > 2 ? parts[1] : parts[0];
 
             if (!folderMap[folderName]) {
                 folderMap[folderName] = [];
@@ -146,6 +163,7 @@ async function main() {
         // keep ONLY folders that actually have audio files
         userFolders = Object.keys(folderMap)
             .filter(folder => folderMap[folder].length > 0)
+            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
             .map(folder => ({
                 name: folder,
                 songs: folderMap[folder]
@@ -200,6 +218,57 @@ async function main() {
         document.querySelector(".trail").style.width = percent + "%";
         currentsong.currentTime = (currentsong.duration * percent) / 100;
     });
+
+    const circle = document.querySelector(".circle");
+
+    let isDragging = false;
+    function updateSeek(clientX) {
+        const rect = seekbar.getBoundingClientRect();
+        let percent = ((clientX - rect.left) / rect.width) * 100;
+        percent = Math.max(0, Math.min(100, percent));
+
+        document.querySelector(".circle").style.left = percent + "%";
+        document.querySelector(".trail").style.width = percent + "%";
+        currentsong.currentTime = (currentsong.duration * percent) / 100;
+    }
+
+    // Mouse events
+    circle.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        currentsong.pause();
+        e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        updateSeek(e.clientX);
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (isDragging) {
+            isDragging = false;
+            currentsong.play();
+        }
+    });
+
+    // Touch events 
+    circle.addEventListener("touchstart", (e) => {
+        isDragging = true;
+        currentsong.pause();
+    });
+
+    document.addEventListener("touchmove", (e) => {
+        if (!isDragging) return;
+        updateSeek(e.touches[0].clientX);
+    });
+
+    document.addEventListener("touchend", () => {
+        if (isDragging) {
+            isDragging = false;
+            currentsong.play();
+        }
+    });
+
 
     //event listner to prev and next
     prev.addEventListener("click", () => {
