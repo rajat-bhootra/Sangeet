@@ -612,14 +612,15 @@ button:active {
     }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 365px) {
     .card {
-        width: 46.8%;
+        width: 46%;
     }
 
     .info {
         font-size: 12px;
     }
-
-
+    .songinfo{
+        font-size: 11.5px;
+    }
 }

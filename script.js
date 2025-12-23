@@ -27,9 +27,9 @@ function cleanSongName(filename) {
     return decodeURI(filename)
         .replace(/\.[^/.]+$/, "")
         .replace(/[_\-]+/g, " ")
-        .replace(/\(.*?\)/g, "")
-        .replace(/\b\d+\b/g, "")
-        .replace(/\s+/g, " ")
+        // .replace(/\(.*?\)/g, "")
+        // .replace(/\b\d+\b/g, "")
+        // .replace(/\s+/g, " ")
         .trim();
 }
 
