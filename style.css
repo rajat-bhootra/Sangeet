@@ -8,12 +8,14 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-*:focus {
-    outline: none;
+*:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.9);
+    outline-offset: 2px;
 }
 
-*:active {
-    outline: none;
+button:focus-visible,
+input:focus-visible {
+    box-shadow: 0 0 0 3px rgba(87, 123, 251, 0.35);
 }
 
 body {

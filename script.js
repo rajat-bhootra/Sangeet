@@ -11,6 +11,7 @@ let songs;
 let currfolder;
 let currentIndex = 0;
 let userFolders = [];
+let currentObjectUrl = null;
 
 function formatTime(seconds) {
     if (isNaN(seconds) || seconds < 0) {
@@ -88,10 +89,19 @@ async function getSongs(folder) {
     return songs
 }
 
+function loadSongSource(file) {
+    if (currentObjectUrl) {
+        URL.revokeObjectURL(currentObjectUrl);
+    }
+
+    currentObjectUrl = URL.createObjectURL(file);
+    currentsong.src = currentObjectUrl;
+}
+
 //music player
 const playmusic = (file, pause = false) => {
     currentIndex = songs.indexOf(file);
-    currentsong.src = URL.createObjectURL(file);
+    loadSongSource(file);
 
     if (!pause) {
         currentsong.play();
@@ -137,7 +147,62 @@ async function displayAlbums() {
 
 async function main() {
 
-    document.getElementById("pickFolder").addEventListener("click", () => {
+    document.getElementById("pickFolder").addEventListener("click", async () => {
+        if (supportsFolderPicker() && window.showDirectoryPicker) {
+            try {
+                const directoryHandle = await window.showDirectoryPicker();
+                const collectedFiles = [];
+
+                async function walkDirectory(handle, path = "") {
+                    for await (const entry of handle.values()) {
+                        if (entry.kind === "file") {
+                            const file = await entry.getFile();
+                            if (isAudioFile(file)) {
+                                collectedFiles.push({ file, path: `${path}${file.name}` });
+                            }
+                        } else if (entry.kind === "directory") {
+                            await walkDirectory(entry, `${path}${entry.name}/`);
+                        }
+                    }
+                }
+
+                await walkDirectory(directoryHandle);
+
+                if (collectedFiles.length === 0) {
+                    alert("No audio files found in the selected folder.");
+                    return;
+                }
+
+                const folderMap = {};
+                collectedFiles.forEach(({ file, path }) => {
+                    const parts = path.split("/");
+                    const folderName = parts.length > 1 ? parts[0] : "Selected Music";
+
+                    if (!folderMap[folderName]) {
+                        folderMap[folderName] = [];
+                    }
+                    folderMap[folderName].push(file);
+                });
+
+                userFolders = Object.keys(folderMap)
+                    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
+                    .map(folder => ({
+                        name: folder,
+                        songs: folderMap[folder]
+                    }));
+
+                songs = userFolders[0].songs;
+                await getSongs(userFolders[0].name);
+                await displayAlbums();
+                playmusic(songs[0], true);
+            } catch (error) {
+                if (error && error.name !== "AbortError") {
+                    console.error(error);
+                }
+            }
+            return;
+        }
+
         document.getElementById("fileInput").click();
     });
 
@@ -198,18 +263,25 @@ async function main() {
 
     // eventlistenr for time update
     currentsong.addEventListener("timeupdate", () => {
+        const duration = Number.isFinite(currentsong.duration) && currentsong.duration > 0 ? currentsong.duration : 0;
+        const progress = duration > 0 ? (currentsong.currentTime / duration) * 100 : 0;
+
         document.querySelector(".currenttime").innerHTML = `${formatTime(currentsong.currentTime)}`
-        document.querySelector(".songduration").innerHTML = `${formatTime(currentsong.duration)}`
-        if ((currentsong.currentTime / currentsong.duration) * 100 < 99.8) {
-            document.querySelector(".circle").style.left = (currentsong.currentTime / currentsong.duration) * 100 + "%"
+        document.querySelector(".songduration").innerHTML = `${formatTime(duration)}`
+        if (progress < 99.8) {
+            document.querySelector(".circle").style.left = progress + "%"
         }
-        document.querySelector(".trail").style.width = (currentsong.currentTime / currentsong.duration) * 100 + "%"
+        document.querySelector(".trail").style.width = progress + "%"
     })
 
     // event listner to seekbar
     const seekbar = document.querySelector(".seekbar");
 
     seekbar.addEventListener("click", (e) => {
+        if (!Number.isFinite(currentsong.duration) || currentsong.duration <= 0) {
+            return;
+        }
+
         const rect = seekbar.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const percent = (clickX / rect.width) * 100;
@@ -223,6 +295,10 @@ async function main() {
 
     let isDragging = false;
     function updateSeek(clientX) {
+        if (!Number.isFinite(currentsong.duration) || currentsong.duration <= 0) {
+            return;
+        }
+
         const rect = seekbar.getBoundingClientRect();
         let percent = ((clientX - rect.left) / rect.width) * 100;
         percent = Math.max(0, Math.min(100, percent));
