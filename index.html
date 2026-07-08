@@ -2,78 +2,401 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
     <title>Sangeet</title>
+
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container flex">
-        <!-- Library -->
-        <div class="left rounded ">
-            <div class="library rounded">
-                <div class="heading">
-                    <img class="invert" src="images/library.svg" alt="lib">
-                    <h2>Your Library</h2>
-                </div>
-                <div class="foldername">
-                    <h3></h3>
-                </div>
-                <div class="songlist">
-                    <ul></ul>
-                </div>
-            </div>
-        </div>
 
-        <!-- Playlist -->
-        <div class="right rounded">
-            <div class="logo rounded">
-                <img src="images/logo.png" alt="logo">
-                <span>SANGEET</span>
-            </div>
+    <!-- ========================= -->
+    <!-- Animated Aurora Background -->
+    <!-- ========================= -->
 
-            <div class="playlist">
-                <div class="name">
-                    <img class="invert" src="images/playlist.svg" alt="playlist">
-                    <span>Playlists</span>
-                    <button id="pickFolder">
-                        <h5 class="text">Upload Folder</h5>
-                    </button>
-                    <input type="file" id="fileInput" accept="audio/*" webkitdirectory multiple hidden>
-                </div>
-                <div class="cardContainer"></div>
-            </div>
-        </div>
-
-        <!-- Playbar -->
-        <div class="playbar">
-            <div class="timeline">
-                <div class="currenttime"></div>
-                <div class="seekbar">
-                    <div class="trail"></div>
-                    <div class="circle"></div>
-                </div>
-                <div class="songduration"></div>
-            </div>
-
-            <div class="infobar">
-                <div class="songinfo"></div>
-                <div class="songbutton invert">
-                    <img id="prev" src="images/prev.svg" alt="previous">
-                    <img id="playing" src="images/play.svg" alt="play">
-                    <img id="next" src="images/next.svg" alt="next">
-                </div>
-                <div class="volume">
-                    <img class="invert" src="images/volume.svg" alt="volume">
-                    <input class="range" type="range" name="volume" min="0" max="100" value="100">
-                </div>
-            </div>
-        </div>
+    <div class="background">
+        <span class="blob blob1"></span>
+        <span class="blob blob2"></span>
+        <span class="blob blob3"></span>
+        <span class="noise"></span>
     </div>
 
+    <!-- ========================= -->
+    <!-- Mobile Overlay -->
+    <!-- ========================= -->
+
+    <div class="mobileOverlay"></div>
+
+    <!-- ========================= -->
+    <!-- App -->
+    <!-- ========================= -->
+
+    <div class="app">
+
+        <!-- ========================= -->
+        <!-- Sidebar -->
+        <!-- ========================= -->
+
+        <aside class="sidebar glass">
+
+            <!-- Logo -->
+
+            <div class="logoSection">
+
+                <div class="logoIcon">
+
+                    <i class="ri-disc-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <h1>SANGEET</h1>
+
+                    <p>Your Music</p>
+
+                </div>
+
+            </div>
+
+            <!-- Mobile Close -->
+
+            <button class="closeSidebar">
+
+                <i class="ri-close-large-line"></i>
+
+            </button>
+
+            <!-- Upload -->
+
+            <div class="uploadCard">
+
+                <div class="uploadIcon">
+
+                    <i class="ri-folder-music-fill"></i>
+
+                </div>
+
+                <div class="uploadContent">
+
+                    <h3>Your Library</h3>
+
+                    <p>Select any folder containing music.</p>
+
+                </div>
+
+                <button id="pickFolder" class="uploadBtn">
+
+                    <i class="ri-folder-open-fill"></i>
+
+                    <span>Upload</span>
+
+                </button>
+
+                <input type="file" id="fileInput" accept="audio/*" webkitdirectory multiple hidden>
+
+            </div>
+
+            <!-- Current Folder -->
+
+            <div class="folderHeader">
+
+                <div>
+
+                    <span class="tinyLabel">
+
+                        PLAYLIST
+
+                    </span>
+
+                    <h3 class="foldername">
+
+                        <span>Select Folder</span>
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <!-- Library -->
+
+            <div class="library">
+
+                <ul class="songlist">
+
+                    <!-- JS -->
+
+                </ul>
+
+            </div>
+
+        </aside>
+
+        <!-- ========================= -->
+        <!-- Main -->
+        <!-- ========================= -->
+
+        <main class="main">
+
+            <!-- ===================================== -->
+            <!-- Playlist Section -->
+            <!-- ===================================== -->
+
+            <section class="playlistSection">
+
+                <div class="sectionHeader">
+
+                    <div>
+
+                        <span class="tinyLabel">
+                            YOUR COLLECTION
+                        </span>
+
+                        <h2>
+                            Playlists
+                        </h2>
+
+                    </div>
+
+                    <div class="sectionActions">
+
+                        <button class="glassAction">
+
+                            <i class="ri-layout-grid-fill"></i>
+
+                        </button>
+
+                        <button class="glassAction">
+
+                            <i class="ri-list-check-3"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Playlist Cards -->
+
+                <div class="cardContainer">
+
+                    <!-- Generated by JS -->
+
+                </div>
+
+            </section>
+
+            <!-- ===================================== -->
+            <!-- Floating Music Card -->
+            <!-- ===================================== -->
+
+            <section class="nowPlaying glass">
+
+                <!-- Left -->
+
+                <div class="albumArea">
+
+                    <div class="albumCover">
+
+                        <div class="vinylGlow"></div>
+
+                        <i class="ri-music-2-fill"></i>
+
+                    </div>
+
+                    <div class="trackInfo">
+
+                        <div class="songTitle">
+
+                            <span class="songinfo">
+
+                                Select a song
+
+                            </span>
+
+                        </div>
+
+                        <p class="artistInfo">
+
+                            Local Music Library
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Middle -->
+
+                <div class="centerPlayer">
+
+                    <div class="playerControls">
+
+                        <button class="playerBtn secondary" id="shuffle">
+                            <i class="ri-shuffle-line"></i>
+                        </button>
+
+                        <button class="playerBtn" id="prev">
+                            <i class="ri-skip-back-fill"></i>
+                        </button>
+
+                        <button class="playMain" id="playing">
+                            <i class="ri-play-fill"></i>
+                        </button>
+
+                        <button class="playerBtn" id="next">
+                            <i class="ri-skip-forward-fill"></i>
+                        </button>
+
+                        <button class="playerBtn secondary" id="repeat">
+                            <i class="ri-repeat-2-line"></i>
+                        </button>
+                    </div>
+
+                    <div class="timelineRow">
+
+                        <span class="currenttime">
+
+                            00:00
+
+                        </span>
+
+                        <div class="seekbar">
+
+                            <div class="trail"></div>
+
+                            <div class="circle"></div>
+
+                        </div>
+
+                        <span class="songduration">
+
+                            00:00
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- Right -->
+
+                <div class="volumeBox">
+
+                    <button class="volumeIcon">
+
+                        <i class="ri-volume-up-fill"></i>
+
+                    </button>
+
+                    <input class="range" type="range" min="0" max="100" value="100">
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- Toast Notification -->
+    <!-- ===================================== -->
+
+    <div class="toast" id="toast">
+
+        <div class="toastIcon">
+            <i class="ri-information-fill"></i>
+        </div>
+
+        <div class="toastContent">
+            <h4>Sangeet</h4>
+            <p></p>
+        </div>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- Floating Background Elements -->
+    <!-- ===================================== -->
+
+    <div class="floatingNotes">
+
+        <span><i class="ri-music-fill"></i></span>
+        <span><i class="ri-music-2-fill"></i></span>
+        <span><i class="ri-disc-fill"></i></span>
+        <span><i class="ri-headphone-fill"></i></span>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- Loader -->
+    <!-- ===================================== -->
+
+    <div class="loader" id="loader">
+
+        <div class="loaderDisc">
+
+            <div class="loaderCenter"></div>
+
+        </div>
+
+        <p>Loading your music...</p>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- Audio Visualizer -->
+    <!-- ===================================== -->
+
+    <div class="visualizer">
+
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- Footer -->
+    <!-- ===================================== -->
+
+    <footer class="footer">
+
+        <span>
+
+            Built with ❤️ for music lovers
+
+        </span>
+
+    </footer>
+
+    <!-- ===================================== -->
+    <!-- Scripts -->
+    <!-- ===================================== -->
+
     <script src="script.js"></script>
+
 </body>
 
 </html>

@@ -1,401 +1,812 @@
+// ==========================================================
+// SANGEET 2.0
+// PART 3A
+// ==========================================================
+
 alert(
-  "Select a folder that contains your music 🎵\n\n" +
-  "• This site only plays your audio files\n" +
-  "• Your music is NOT uploaded or stored\n" +
-  "• Reloading the page will remove the selected files\n\n" +
-  "Enjoy your music!"
+    `🎵 Welcome to Sangeet
+
+• Your music never leaves your computer.
+• Nothing is uploaded.
+• Select a folder and enjoy.
+
+Happy Listening ❤️`
 );
 
 let currentsong = new Audio();
-let songs;
-let currfolder;
-let currentIndex = 0;
+
+let songs = [];
 let userFolders = [];
+let currentFolder = "";
+
+let currentIndex = 0;
 let currentObjectUrl = null;
 
+let isDragging = false;
+
+const playBtn = document.getElementById("playing");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+
+const songList = document.querySelector(".songlist");
+const folderTitle = document.querySelector(".foldername span");
+const cardContainer = document.querySelector(".cardContainer");
+
+const songInfo = document.querySelector(".songinfo");
+
+const currentTime = document.querySelector(".currenttime");
+const duration = document.querySelector(".songduration");
+
+const seekbar = document.querySelector(".seekbar");
+const trail = document.querySelector(".trail");
+const circle = document.querySelector(".circle");
+
+const loader =
+    document.getElementById("loader");
+
+// ==========================================================
+// TOAST
+// ==========================================================
+
+function showToast(message) {
+
+    const toast = document.getElementById("toast");
+
+    toast.querySelector("p").textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(showToast.timeout);
+
+    showToast.timeout = setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 2800);
+
+}
+
+function closeMenu() {
+
+    sidebar.classList.remove("open");
+
+    overlay.classList.remove("show");
+
+}
+
+// ==========================================================
+// HELPERS
+// ==========================================================
+
 function formatTime(seconds) {
+
     if (isNaN(seconds) || seconds < 0) {
-        return "00:00"
+
+        return "00:00";
+
     }
+
     const mins = Math.floor(seconds / 60);
+
     const secs = Math.floor(seconds % 60);
-    const paddedMins = mins.toString().padStart(2, '0');
-    const paddedSecs = secs.toString().padStart(2, '0');
-    return `${paddedMins}:${paddedSecs}`;
+
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+
 }
 
-function cleanSongName(filename) {
-    return decodeURI(filename)
+function cleanSongName(name) {
+
+    return decodeURI(name)
+
         .replace(/\.[^/.]+$/, "")
+
         .replace(/[_\-]+/g, " ")
-        // .replace(/\(.*?\)/g, "")
-        // .replace(/\b\d+\b/g, "")
-        // .replace(/\s+/g, " ")
+
+        .replace(/\s+/g, " ")
+
         .trim();
+
 }
 
-function cleanFolderName(folderPath) {
-    const folder = folderPath.split("/").pop();
+function cleanFolderName(folder) {
+
     return decodeURI(folder)
+
         .replace(/[_\-]+/g, " ")
+
         .replace(/\s+/g, " ")
+
         .trim();
+
 }
 
 function isAudioFile(file) {
-    return file.type.startsWith("audio/") ||
-        /\.(mp3|wav|ogg|m4a|flac|aac)$/i.test(file.name);
+
+    return file.type.startsWith("audio/")
+
+        ||
+
+        /\.(mp3|wav|ogg|aac|flac|m4a)$/i.test(file.name);
+
 }
 
 function supportsFolderPicker() {
+
     return "showDirectoryPicker" in window;
+
 }
 
-async function getSongs(folder) {
-    currfolder = folder;
-    const folderTitle = document.querySelector(".foldername h3");
-    if (folderTitle) {
-        folderTitle.textContent = cleanFolderName(folder);
-    }
+// ==========================================================
+// OBJECT URL
+// ==========================================================
 
-    // sort songs alphanumerically
-    songs.sort((a, b) =>
-        cleanSongName(a.name).localeCompare(
-            cleanSongName(b.name),
-            undefined,
-            { numeric: true, sensitivity: "base" }
-        )
-    );
+function loadSong(file) {
 
-    //show all the songs in the library
-    let songUL = document.querySelector(".songlist ul");
-    songUL.innerHTML = "";
-
-    songs.forEach((file, index) => {
-        songUL.innerHTML += `
-            <li data-index="${index}">
-                <img class="invert" src="images/music.svg" alt="music">
-                <div class="info">${cleanSongName(file.name)}</div>
-                <img class="invert" src="images/play.svg" alt="play">
-            </li>`;
-    });
-
-    Array.from(songUL.children).forEach(li => {
-        li.addEventListener("click", () => {
-            playmusic(songs[li.dataset.index]);
-        });
-    });
-
-    return songs
-}
-
-function loadSongSource(file) {
     if (currentObjectUrl) {
+
         URL.revokeObjectURL(currentObjectUrl);
+
     }
 
     currentObjectUrl = URL.createObjectURL(file);
+
     currentsong.src = currentObjectUrl;
+
 }
 
-//music player
-const playmusic = (file, pause = false) => {
+// ==========================================================
+// PLAY
+// ==========================================================
+
+function playMusic(file, pause = false) {
+
     currentIndex = songs.indexOf(file);
-    loadSongSource(file);
+
+    loadSong(file);
+
+    songInfo.textContent = cleanSongName(file.name);
+    requestAnimationFrame(() => {
+        songInfo.classList.remove("marquee");
+        if (songInfo.scrollWidth > songInfo.parentElement.clientWidth) {
+            songInfo.classList.add("marquee");
+        }
+    });
+
+    currentTime.textContent = "00:00";
+
+    duration.textContent = "00:00";
 
     if (!pause) {
+
         currentsong.play();
-        playing.src = "images/pause.svg";
+
+        playBtn.innerHTML =
+
+            `<i class="ri-pause-fill"></i>`;
+
     }
 
-    document.querySelector(".songinfo").innerHTML = cleanSongName(file.name);
-    document.querySelector(".currenttime").innerHTML = "00:00";
-    document.querySelector(".songduration").innerHTML = "00:00";
-};
+}
 
+// ==========================================================
+// LIBRARY
+// ==========================================================
 
-//show all playlist folders
+async function getSongs(folder) {
+
+    currentFolder = folder;
+
+    folderTitle.textContent =
+
+        cleanFolderName(folder);
+
+    songs.sort((a, b) => {
+
+        return cleanSongName(a.name)
+
+            .localeCompare(
+
+                cleanSongName(b.name),
+
+                undefined,
+
+                {
+
+                    numeric: true,
+
+                    sensitivity: "base"
+
+                });
+
+    });
+
+    songList.innerHTML = "";
+
+    songs.forEach((file, index) => {
+
+        songList.innerHTML += `
+
+<li data-index="${index}">
+
+<div class="info">
+
+${cleanSongName(file.name)}
+
+</div>
+
+</li>
+
+`;
+
+    });
+
+    Array.from(songList.children).forEach(item => {
+
+        item.addEventListener("click", () => {
+
+            playMusic(
+
+                songs[item.dataset.index]
+
+            );
+
+        });
+
+    });
+
+}
+
+// ==========================================================
+// PLAYLISTS
+// ==========================================================
+
+function randomGradient() {
+
+    const gradients = [
+
+        "linear-gradient(135deg,#8B5CF6,#06B6D4)",
+
+        "linear-gradient(135deg,#ff6b6b,#ff9f43)",
+
+        "linear-gradient(135deg,#4facfe,#00f2fe)",
+
+        "linear-gradient(135deg,#43e97b,#38f9d7)",
+
+        "linear-gradient(135deg,#fa709a,#fee140)",
+
+        "linear-gradient(135deg,#30cfd0,#330867)"
+
+    ];
+
+    return gradients[Math.floor(Math.random() * gradients.length)];
+
+}
+
 async function displayAlbums() {
-    const cardContainer = document.querySelector(".cardContainer");
-    cardContainer.innerHTML = "";
 
+    cardContainer.innerHTML = "";
     userFolders.forEach(folder => {
         cardContainer.innerHTML += `
-            <div data-folder="${folder.name}" class="card bg-grey">
-                <div class="foldersvg">
-                    <img src="images/folder.svg" alt="folder">
-                </div>
-                <div class="play">
-                    <img src="images/playlist_play.svg" alt="playlist_play">
-                </div>
-                <div class="cardname">
-                    <h2>${cleanFolderName(folder.name)}</h2>
-                </div>         
-            </div>`;
+
+<div
+class="card"
+data-folder="${folder.name}">
+
+<div
+class="foldersvg"
+style="background:${randomGradient()}">
+</div>
+
+<div class="cardname">
+
+<h2>
+
+${cleanFolderName(folder.name)}
+
+</h2>
+
+<p>
+
+${folder.songs.length} Songs
+
+</p>
+
+</div>
+
+<div class="play"></div>
+
+</div>
+
+`;
+
     });
 
-    // load the folder whenever the card is clicked
-    Array.from(document.getElementsByClassName("card")).forEach(card => {
-        card.addEventListener("click", async (e) => {
-            const folderName = e.currentTarget.dataset.folder;
-            songs = userFolders.find(f => f.name === folderName).songs;
-            await getSongs(folderName);
-            playmusic(songs[0]);
+    document
+
+        .querySelectorAll(".card")
+
+        .forEach(card => {
+
+            card.onclick = async () => {
+
+                const folder =
+
+                    card.dataset.folder;
+
+                songs = userFolders.find(
+
+                    f => f.name === folder
+
+                ).songs;
+
+                await getSongs(folder);
+
+                playMusic(songs[0]);
+
+                showToast(
+
+                    `${cleanFolderName(folder)} loaded`
+
+                );
+
+            };
+
         });
-    });
+
 }
+// ==========================================================
+// SANGEET 2.0
+// PART 3B
+// ==========================================================
+
+// ==========================================================
+// MAIN
+// ==========================================================
 
 async function main() {
 
-    document.getElementById("pickFolder").addEventListener("click", async () => {
-        if (supportsFolderPicker() && window.showDirectoryPicker) {
-            try {
-                const directoryHandle = await window.showDirectoryPicker();
-                const collectedFiles = [];
+    // Loader
+    loader.style.display = "flex";
 
-                async function walkDirectory(handle, path = "") {
-                    for await (const entry of handle.values()) {
-                        if (entry.kind === "file") {
-                            const file = await entry.getFile();
-                            if (isAudioFile(file)) {
-                                collectedFiles.push({ file, path: `${path}${file.name}` });
+    setTimeout(() => {
+        loader.style.display = "none";
+    }, 1200);
+
+    // ======================================================
+    // Upload Folder
+    // ======================================================
+
+    document
+        .getElementById("pickFolder")
+        .addEventListener("click", async () => {
+
+            // -------------------------
+            // Modern Folder Picker
+            // -------------------------
+
+            if (supportsFolderPicker() && window.showDirectoryPicker) {
+
+                try {
+
+                    const directory =
+                        await window.showDirectoryPicker();
+
+                    const collectedFiles = [];
+
+                    async function walk(handle, path = "") {
+
+                        for await (const entry of handle.values()) {
+
+                            if (entry.kind === "file") {
+
+                                const file = await entry.getFile();
+
+                                if (isAudioFile(file)) {
+
+                                    collectedFiles.push({
+                                        file,
+                                        path: `${path}${file.name}`
+                                    });
+
+                                }
+
+                            } else {
+
+                                await walk(
+                                    entry,
+                                    `${path}${entry.name}/`
+                                );
+
                             }
-                        } else if (entry.kind === "directory") {
-                            await walkDirectory(entry, `${path}${entry.name}/`);
+
                         }
+
                     }
+
+                    await walk(directory);
+
+                    if (collectedFiles.length === 0) {
+
+                        showToast("No audio files found.");
+
+                        return;
+
+                    }
+
+                    const folderMap = {};
+
+                    collectedFiles.forEach(({ file, path }) => {
+
+                        const folder =
+                            path.split("/")[0] || "Music";
+
+                        if (!folderMap[folder]) {
+
+                            folderMap[folder] = [];
+
+                        }
+
+                        folderMap[folder].push(file);
+
+                    });
+
+                    userFolders = Object.keys(folderMap)
+                        .sort((a, b) =>
+                            a.localeCompare(
+                                b,
+                                undefined,
+                                {
+                                    numeric: true,
+                                    sensitivity: "base"
+                                }
+                            )
+                        )
+                        .map(folder => ({
+                            name: folder,
+                            songs: folderMap[folder]
+                        }));
+
+                    songs = userFolders[0].songs;
+
+                    await getSongs(userFolders[0].name);
+
+                    displayAlbums();
+
+                    playMusic(songs[0], true);
+
+                    showToast(
+                        `${songs.length} songs loaded`
+                    );
+
+                } catch (err) {
+
+                    if (err.name !== "AbortError") {
+
+                        console.error(err);
+
+                    }
+
                 }
 
-                await walkDirectory(directoryHandle);
+                return;
 
-                if (collectedFiles.length === 0) {
-                    alert("No audio files found in the selected folder.");
-                    return;
+            }
+
+            // -------------------------
+            // Fallback Picker
+            // -------------------------
+
+            document
+                .getElementById("fileInput")
+                .click();
+
+        });
+
+    // ======================================================
+    // Input Folder
+    // ======================================================
+
+    document
+        .getElementById("fileInput")
+        .addEventListener("change", e => {
+
+            const files =
+                Array.from(e.target.files);
+
+            const folderMap = {};
+
+            files.forEach(file => {
+
+                if (!isAudioFile(file)) return;
+
+                const parts =
+                    file.webkitRelativePath.split("/");
+
+                const folder =
+                    parts.length > 2
+                        ? parts[1]
+                        : parts[0];
+
+                if (!folderMap[folder]) {
+
+                    folderMap[folder] = [];
+
                 }
 
-                const folderMap = {};
-                collectedFiles.forEach(({ file, path }) => {
-                    const parts = path.split("/");
-                    const folderName = parts.length > 1 ? parts[0] : "Selected Music";
+                folderMap[folder].push(file);
 
-                    if (!folderMap[folderName]) {
-                        folderMap[folderName] = [];
-                    }
-                    folderMap[folderName].push(file);
-                });
+            });
 
-                userFolders = Object.keys(folderMap)
-                    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
+            userFolders =
+                Object.keys(folderMap)
+
+                    .filter(
+                        folder =>
+                            folderMap[folder].length
+                    )
+
+                    .sort((a, b) =>
+                        a.localeCompare(
+                            b,
+                            undefined,
+                            {
+                                numeric: true,
+                                sensitivity: "base"
+                            }
+                        )
+                    )
+
                     .map(folder => ({
                         name: folder,
                         songs: folderMap[folder]
                     }));
 
-                songs = userFolders[0].songs;
-                await getSongs(userFolders[0].name);
-                await displayAlbums();
-                playmusic(songs[0], true);
-            } catch (error) {
-                if (error && error.name !== "AbortError") {
-                    console.error(error);
-                }
+            if (!userFolders.length) {
+
+                showToast(
+                    "No valid audio files found."
+                );
+
+                return;
+
             }
-            return;
-        }
 
-        document.getElementById("fileInput").click();
-    });
+            songs = userFolders[0].songs;
 
-    document.getElementById("fileInput").addEventListener("change", (e) => {
-        const files = Array.from(e.target.files);
+            getSongs(userFolders[0].name);
 
-        userFolders = [];
-        const folderMap = {};
+            displayAlbums();
 
-        files.forEach(file => {
-            // ignore non-audio files
-            if (!isAudioFile(file)) return;
+            playMusic(songs[0], true);
 
-            const parts = file.webkitRelativePath.split("/");
-            const folderName = parts.length > 2 ? parts[1] : parts[0];
+            showToast(
+                `${songs.length} songs loaded`
+            );
 
-            if (!folderMap[folderName]) {
-                folderMap[folderName] = [];
-            }
-            folderMap[folderName].push(file);
         });
 
-        // keep ONLY folders that actually have audio files
-        userFolders = Object.keys(folderMap)
-            .filter(folder => folderMap[folder].length > 0)
-            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
-            .map(folder => ({
-                name: folder,
-                songs: folderMap[folder]
-            }));
+    // ======================================================
+    // Play Pause
+    // ======================================================
 
-        // stop if nothing valid was found
-        if (userFolders.length === 0) {
-            alert("No audio files found in the selected folder.");
-            return;
-        }
+    playBtn.addEventListener("click", () => {
 
-        // load first valid folder
-        songs = userFolders[0].songs;
-        getSongs(userFolders[0].name);
-        displayAlbums();
-        playmusic(songs[0], true);
-    });
+        if (!currentsong.src) return;
 
-
-
-    //Attach an event listener to play
-    playing.addEventListener("click", () => {
         if (currentsong.paused) {
+
             currentsong.play();
-            playing.src = "images/pause.svg";
-        }
-        else {
+
+            playBtn.innerHTML =
+                `<i class="ri-pause-fill"></i>`;
+
+        } else {
+
             currentsong.pause();
-            playing.src = "images/play.svg";
-        }
-    });
 
-    // eventlistenr for time update
-    currentsong.addEventListener("timeupdate", () => {
-        const duration = Number.isFinite(currentsong.duration) && currentsong.duration > 0 ? currentsong.duration : 0;
-        const progress = duration > 0 ? (currentsong.currentTime / duration) * 100 : 0;
+            playBtn.innerHTML =
+                `<i class="ri-play-fill"></i>`;
 
-        document.querySelector(".currenttime").innerHTML = `${formatTime(currentsong.currentTime)}`
-        document.querySelector(".songduration").innerHTML = `${formatTime(duration)}`
-        if (progress < 99.8) {
-            document.querySelector(".circle").style.left = progress + "%"
-        }
-        document.querySelector(".trail").style.width = progress + "%"
-    })
-
-    // event listner to seekbar
-    const seekbar = document.querySelector(".seekbar");
-
-    seekbar.addEventListener("click", (e) => {
-        if (!Number.isFinite(currentsong.duration) || currentsong.duration <= 0) {
-            return;
         }
 
-        const rect = seekbar.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const percent = (clickX / rect.width) * 100;
-
-        document.querySelector(".circle").style.left = percent + "%";
-        document.querySelector(".trail").style.width = percent + "%";
-        currentsong.currentTime = (currentsong.duration * percent) / 100;
     });
 
-    const circle = document.querySelector(".circle");
+    // ======================================================
+    // Previous
+    // ======================================================
 
-    let isDragging = false;
-    function updateSeek(clientX) {
-        if (!Number.isFinite(currentsong.duration) || currentsong.duration <= 0) {
-            return;
-        }
+    prevBtn.addEventListener("click", () => {
 
-        const rect = seekbar.getBoundingClientRect();
-        let percent = ((clientX - rect.left) / rect.width) * 100;
-        percent = Math.max(0, Math.min(100, percent));
-
-        document.querySelector(".circle").style.left = percent + "%";
-        document.querySelector(".trail").style.width = percent + "%";
-        currentsong.currentTime = (currentsong.duration * percent) / 100;
-    }
-
-    // Mouse events
-    circle.addEventListener("mousedown", (e) => {
-        isDragging = true;
-        currentsong.pause();
-        e.preventDefault();
-    });
-
-    document.addEventListener("mousemove", (e) => {
-        if (!isDragging) return;
-        updateSeek(e.clientX);
-    });
-
-    document.addEventListener("mouseup", () => {
-        if (isDragging) {
-            isDragging = false;
-            currentsong.play();
-        }
-    });
-
-    // Touch events 
-    circle.addEventListener("touchstart", (e) => {
-        isDragging = true;
-        currentsong.pause();
-    });
-
-    document.addEventListener("touchmove", (e) => {
-        if (!isDragging) return;
-        updateSeek(e.touches[0].clientX);
-    });
-
-    document.addEventListener("touchend", () => {
-        if (isDragging) {
-            isDragging = false;
-            currentsong.play();
-        }
-    });
-
-
-    //event listner to prev and next
-    prev.addEventListener("click", () => {
         if (currentIndex > 0) {
-            playmusic(songs[currentIndex - 1]);
+
+            playMusic(
+                songs[currentIndex - 1]
+            );
+
         }
+
     });
 
-    next.addEventListener("click", () => {
+    // ======================================================
+    // Next
+    // ======================================================
+
+    nextBtn.addEventListener("click", () => {
+
         if (currentIndex + 1 < songs.length) {
-            playmusic(songs[currentIndex + 1]);
+
+            playMusic(
+                songs[currentIndex + 1]
+            );
+
         }
+
     });
+
+    // ======================================================
+    // Auto Next
+    // ======================================================
 
     currentsong.addEventListener("ended", () => {
+
         if (currentIndex + 1 < songs.length) {
-            playmusic(songs[currentIndex + 1]);
+
+            playMusic(
+                songs[currentIndex + 1]
+            );
+
         } else {
-            playing.src = "images/play.svg";
+
+            playBtn.innerHTML =
+                `<i class="ri-play-fill"></i>`;
+
         }
+
     });
 
-    // event listner to volume
-    document.querySelector(".volume").getElementsByTagName("input")[0].addEventListener("change", (e) => {
-        currentsong.volume = parseInt(e.target.value) / 100
+    // ======================================================
+    // Time Update
+    // ======================================================
 
-        if (document.querySelector(".volume").getElementsByTagName("img")[0].src.includes("images/mute.svg")) {
-            document.querySelector(".volume").getElementsByTagName("img")[0].src = document.querySelector(".volume").getElementsByTagName("img")[0].src.replace("images/mute.svg", "images/volume.svg")
-        }
-        if (currentsong.volume == 0) {
-            document.querySelector(".volume").getElementsByTagName("img")[0].src = document.querySelector(".volume").getElementsByTagName("img")[0].src.replace("images/volume.svg", "images/mute.svg")
-        }
-    })
+    currentsong.addEventListener(
+        "timeupdate",
+        () => {
 
-    // event listner to mute the track
-    let prev_value
-    document.querySelector(".volume>img").addEventListener("click", e => {
-        if (e.target.src.includes("images/volume.svg")) {
-            e.target.src = e.target.src.replace("images/volume.svg", "images/mute.svg")
-            currentsong.volume = 0
-            prev_value = document.querySelector(".volume").getElementsByTagName("input")[0].value
-            document.querySelector(".volume").getElementsByTagName("input")[0].value = 0
+            const total =
+                Number.isFinite(currentsong.duration)
+                    ? currentsong.duration
+                    : 0;
+
+            const progress =
+                total > 0
+                    ? (currentsong.currentTime /
+                        total) *
+                    100
+                    : 0;
+
+            currentTime.textContent =
+                formatTime(
+                    currentsong.currentTime
+                );
+
+            duration.textContent =
+                formatTime(total);
+
+            trail.style.width =
+                progress + "%";
+
+            circle.style.left =
+                progress + "%";
 
         }
-        else {
-            e.target.src = e.target.src.replace("images/mute.svg", "images/volume.svg")
-            currentsong.volume = parseInt(prev_value) / 100
-            document.querySelector(".volume").getElementsByTagName("input")[0].value = prev_value
+    );
+
+    // ======================================================
+    // Seek
+    // ======================================================
+
+    function seek(clientX) {
+
+        if (
+            !Number.isFinite(
+                currentsong.duration
+            )
+        )
+            return;
+
+        const rect =
+            seekbar.getBoundingClientRect();
+
+        let percent =
+            ((clientX - rect.left) /
+                rect.width) *
+            100;
+
+        percent = Math.max(
+            0,
+            Math.min(100, percent)
+        );
+
+        trail.style.width =
+            percent + "%";
+
+        circle.style.left =
+            percent + "%";
+
+        currentsong.currentTime =
+            (currentsong.duration * percent) /
+            100;
+
+    }
+
+    seekbar.onclick = e =>
+        seek(e.clientX);
+
+    circle.onmousedown = () => {
+
+        isDragging = true;
+
+    };
+
+    document.onmousemove = e => {
+
+        if (!isDragging) return;
+
+        seek(e.clientX);
+
+    };
+
+    document.onmouseup = () => {
+
+        isDragging = false;
+
+    };
+
+    // Touch
+
+    circle.ontouchstart = () => {
+
+        isDragging = true;
+
+    };
+
+    document.ontouchmove = e => {
+
+        if (!isDragging) return;
+
+        seek(e.touches[0].clientX);
+
+    };
+
+    document.ontouchend = () => {
+
+        isDragging = false;
+
+    };
+
+    // ======================================================
+    // Volume
+    // ======================================================
+
+    const volume =
+        document.querySelector(".range");
+
+    currentsong.volume = 1;
+
+    volume.addEventListener(
+        "input",
+        e => {
+
+            currentsong.volume =
+                e.target.value / 100;
 
         }
-    })
+    );
+
 }
 
-main()
+// ==========================================================
+// START
+// ==========================================================
+
+main();
